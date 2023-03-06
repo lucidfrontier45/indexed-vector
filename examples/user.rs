@@ -1,5 +1,6 @@
 use indexed_vector::{BTreeIndexedVector, HashIndexedVector, IndexedVector};
 
+#[allow(dead_code)]
 #[derive(Clone, Debug)]
 struct User {
     name: String,

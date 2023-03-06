@@ -12,7 +12,7 @@ pub struct BTreeIndexedVector<K, V> {
 impl<K: Ord, V> BTreeIndexedVector<K, V> {
     /// Create a new `BTreeIndexedVector` from a vector of items.
     /// The `key_func` is used to extract the key from an item.
-    pub fn new<F: Fn(&V) -> K + 'static>(data: Vec<V>, key_func: F) -> Self {
+    pub fn new<F: Fn(&V) -> K + 'static, C: IntoIterator<Item = V>>(data: C, key_func: F) -> Self {
         let mut map = BTreeMap::new();
         for item in data {
             let key = key_func(&item);
