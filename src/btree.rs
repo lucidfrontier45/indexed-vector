@@ -1,4 +1,4 @@
-use std::{collections::BTreeMap, ops::RangeBounds};
+use std::{collections::BTreeMap, ops::RangeBounds, slice::Iter};
 
 use crate::IndexedVector;
 
@@ -25,17 +25,14 @@ impl<K: Ord, V> BTreeIndexedVector<K, V> {
     }
 
     /// Search for items in the given range.
-    pub fn search_range<R: RangeBounds<K>>(&self, range: R) -> Vec<&V> {
-        self.map.range(range).flat_map(|(_, v)| v.iter()).collect()
+    pub fn search_range<R: RangeBounds<K>>(&self, range: R) -> impl Iterator<Item = &V> {
+        self.map.range(range).flat_map(|(_, v)| v.iter())
     }
 }
 
 impl<K: Ord, V> IndexedVector<K, V> for BTreeIndexedVector<K, V> {
-    fn search(&self, key: &K) -> Vec<&V> {
-        self.map
-            .get(key)
-            .map(|v| v.iter().collect())
-            .unwrap_or_default()
+    fn search(&self, key: &K) -> Iter<'_, V> {
+        self.map.get(key).map_or([].iter(), |v| v.iter())
     }
 
     fn insert(&mut self, item: V) {
@@ -54,14 +51,14 @@ mod test {
             vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             Box::new(|x: &i32| x % 3),
         );
-        assert_eq!(map.search(&0), vec![&3, &6, &9]);
-        assert_eq!(map.search(&1), vec![&1, &4, &7, &10]);
-        assert_eq!(map.search(&2), vec![&2, &5, &8]);
+        assert_eq!(map.search(&0).collect::<Vec<_>>(), vec![&3, &6, &9]);
+        assert_eq!(map.search(&1).collect::<Vec<_>>(), vec![&1, &4, &7, &10]);
+        assert_eq!(map.search(&2).collect::<Vec<_>>(), vec![&2, &5, &8]);
 
         map.insert(11);
-        assert_eq!(map.search(&0), vec![&3, &6, &9]);
-        assert_eq!(map.search(&1), vec![&1, &4, &7, &10]);
-        assert_eq!(map.search(&2), vec![&2, &5, &8, &11]);
+        assert_eq!(map.search(&0).collect::<Vec<_>>(), vec![&3, &6, &9]);
+        assert_eq!(map.search(&1).collect::<Vec<_>>(), vec![&1, &4, &7, &10]);
+        assert_eq!(map.search(&2).collect::<Vec<_>>(), vec![&2, &5, &8, &11]);
     }
 
     #[test]
@@ -70,7 +67,7 @@ mod test {
             vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
             Box::new(|x: &i32| x % 3),
         );
-        let mut res = map.search_range(0..2);
+        let mut res = map.search_range(0..2).collect::<Vec<_>>();
         res.sort();
         assert_eq!(res, vec![&1, &3, &4, &6, &7, &9, &10]);
     }

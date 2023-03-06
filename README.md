@@ -36,12 +36,12 @@ fn main() {
 
     let hash_vec = HashIndexedVector::new(users.clone(), |user: &User| user.age);
     // Tom and Jane
-    dbg!(hash_vec.search(&20));
+    dbg!(hash_vec.search(&20).collect::<Vec<_>>());
     // Ivan
-    dbg!(hash_vec.search(&30));
+    dbg!(hash_vec.search(&30).collect::<Vec<_>>());
 
     let btree_vec = BTreeIndexedVector::new(users, |user: &User| user.age);
     // Tom, Jane and Ivan
-    dbg!(btree_vec.search_range(10..40));
+    dbg!(btree_vec.search_range(10..40).collect::<Vec<_>>());
 }
 ```
