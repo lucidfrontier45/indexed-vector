@@ -2,19 +2,25 @@ use std::{collections::HashMap, hash::Hash};
 
 use crate::IndexedVector;
 
+/// A simple implementation of `IndexedVector` using `HashMap`.
 pub struct HashIndexedVector<K, V> {
     map: HashMap<K, Vec<V>>,
     key_func: Box<dyn Fn(&V) -> K>,
 }
 
 impl<K: Eq + Hash, V> HashIndexedVector<K, V> {
-    pub fn new(data: Vec<V>, key_func: Box<dyn Fn(&V) -> K>) -> Self {
+    /// Create a new `HashIndexedVector` from a vector of items.
+    /// The `key_func` is used to extract the key from an item.
+    pub fn new<F: Fn(&V) -> K + 'static>(data: Vec<V>, key_func: F) -> Self {
         let mut map = HashMap::new();
         for item in data {
             let key = key_func(&item);
             map.entry(key).or_insert_with(Vec::new).push(item);
         }
-        Self { map, key_func }
+        Self {
+            map,
+            key_func: Box::new(key_func),
+        }
     }
 }
 
@@ -38,8 +44,10 @@ mod test {
 
     #[test]
     fn test_hash_indexed_map() {
-        let mut map =
-            HashIndexedVector::new(vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10], Box::new(|x| x % 3));
+        let mut map = HashIndexedVector::new(
+            vec![1, 2, 3, 4, 5, 6, 7, 8, 9, 10],
+            Box::new(|x: &i32| x % 3),
+        );
         assert_eq!(map.search(&0), vec![&3, &6, &9]);
         assert_eq!(map.search(&1), vec![&1, &4, &7, &10]);
         assert_eq!(map.search(&2), vec![&2, &5, &8]);
