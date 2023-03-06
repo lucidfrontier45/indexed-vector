@@ -1,0 +1,15 @@
+[package]
+name = "indexed-vector"
+version = "0.1.0"
+edition = "2021"
+description = "A Rust library that implements vector container that can be indexed with specified function."
+keywords = ["datastructures"]
+categories = ["data-structures"]
+license-file = "LICENSE"
+readme = "README.md"
+repository = "https://github.com/lucidfrontier45/indexed-vector"
+authors = ["Du Shiqiao <lucidfrontier.45@gmail.com>"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
