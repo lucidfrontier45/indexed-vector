@@ -1,22 +1,11 @@
-# indexed-vector
-A Rust library that implements vector container that can be indexed with specified function.
-
-## Implemented Structs
-
-- `HashIndexedVector` implements a simple indexed vector with `HashMap`
-- `BTreeIndexedVector` implements an indexed vector with `BTreeMap`. It also supports range query.
-
-## Example
-
-```rust
 use indexed_vector::{BTreeIndexedVector, HashIndexedVector, IndexedVector};
 
+#[allow(dead_code)]
 #[derive(Clone, Debug)]
 struct User {
     name: String,
     age: u16,
 }
-
 
 fn main() {
     let users = vec![
@@ -44,4 +33,3 @@ fn main() {
     // Tom, Jane and Ivan
     dbg!(btree_vec.search_range(10..40).collect::<Vec<_>>());
 }
-```
